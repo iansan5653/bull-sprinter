@@ -27,7 +27,7 @@ function getJSONFromResponse(xhr) {
   });
 }
 
-function showRoutes(data) {
+function showRoutesList(data) {
   let container = document.querySelector(".container");
   container.innerHTML = "";
   data.routes.forEach(route => {
@@ -37,7 +37,34 @@ function showRoutes(data) {
   });
 }
 
-getJson(ROUTES_URL).then(getJSONFromResponse).then(showRoutes);
-document.addEventListener("ready", () => {
-  console.log("test");
-});
+function showRoutes(data, map) {
+  data.routes.forEach(route => {
+    coordinates = route.geometry.coordinates[0].map(point => {
+      let pointAsLatLng = {lng: +point[0], lat: +point[1]};
+      return pointAsLatLng;
+    });
+    let routePath = new google.maps.Polyline({
+      map: map,
+      path: coordinates,
+      strokeColor: "#" + route.tags.route_color,
+      strokeOpacity: 0.5,
+      strokeWeight: 2,
+      visible: true
+    });
+    console.log(routePath)
+  })
+}
+
+function initMapWithRoutes(data) {
+  const USF = {lat: 28.0610596, lng: -82.4155004};
+  let map = new google.maps.Map(
+      document.getElementById('map-container'), {zoom: 15, center: USF});
+
+  showRoutes(data, map)
+}
+
+function initMap() {
+  getJson(ROUTES_URL).then(getJSONFromResponse).then(initMapWithRoutes).catch(err => {
+    console.error(err);
+  })
+}

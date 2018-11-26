@@ -6,11 +6,25 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Bull Sprinter Demo</title>
   <script src="demo.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+  <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
 </head>
-<body>
-  <h1>Bull Sprinter Demo</h1>
-  <h2>Routes List</h2>
-  <ul class="container">Loading</ul>
+<body class="mdc-typography">
+  <header class="mdc-top-app-bar">
+    <div class="mdc-top-app-bar__row">
+      <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+        <a href="#" class="material-icons mdc-top-app-bar__navigation-icon">menu</a>
+        <span class="mdc-top-app-bar__title">Bull Sprinter Demo</span>
+      </section>
+    </div>
+  </header>
+  <div id="map-container">Loading...
+  </div>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXB57U462X9Eci55yF6G_sBfQdQ4j6Ipg &callback=initMap">
+  </script>
 </body>
 </html>
