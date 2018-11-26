@@ -50,4 +50,9 @@ body {
   padding: .5em;
   margin: 1em;
   border-left: 4px solid gray;
+  cursor: click;
+}
+
+.route-card:hover {
+  background-color: rgba(0,0,0,0.1);
 }

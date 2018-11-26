@@ -56,7 +56,7 @@ function showRoutes(routes, map) {
 }
 
 function showStops(stops, map) {
-  let routes = {}
+  let routes = {all: []}
   stops.forEach(stop => {
     coordinates = {lng: +stop.geometry.coordinates[0], lat: +stop.geometry.coordinates[1]};
     let stopMarker = new google.maps.Marker({
@@ -71,10 +71,29 @@ function showStops(stops, map) {
         routes[route.route_onestop_id] = []
       }
       routes[route.route_onestop_id].push(stopMarker)
+      routes.all.push(stopMarker)
     }
   });
 
   addRouteListeners(routes)
+}
+
+function addRouteListeners(routes) {
+  document.querySelectorAll(".route-selector").forEach(routeSelector => {
+    routeSelector.addEventListener("mouseover", event => {
+      routes.all.forEach(stopMarker => {
+        stopMarker.setVisible(false);
+      });
+      routes[routeSelector.dataset.onestop_id].forEach(stopMarker => {
+        stopMarker.setVisible(true);
+      });
+    });
+    routeSelector.addEventListener("mouseout", event => {
+      routes.all.forEach(stopMarker => {
+        stopMarker.setVisible(true);
+      });
+    });
+  })
 }
 
 function startMap(data) {
@@ -88,15 +107,14 @@ function startMap(data) {
         minZoom: 13
       });
 
-  showRoutes(data.routes, map)
-  showStops(data.stops, map)
+  initRoutesMenu(data, map)
 }
 
-function initRoutesMenu(routes) {
+function initRoutesMenu(data, map) {
   let routesMenu = document.getElementById("routes-menu");
   let routeTemplate = routesMenu.querySelector(".route-card")
   routeTemplate = routeTemplate.parentElement.removeChild(routeTemplate);
-  routes.forEach(route => {
+  data.routes.forEach(route => {
     let routeElement = routeTemplate.cloneNode(true);
     routeElement.style.borderLeftColor = "#" + route.tags.route_color;
     let routeTitle = routeElement.querySelector(".route-card--title");
@@ -106,12 +124,14 @@ function initRoutesMenu(routes) {
     routeElement.dataset.onestop_id = route.onestop_id;
     routesMenu.appendChild(routeElement);
   });
+
+  showRoutes(data.routes, map)
+  showStops(data.stops, map)
 }
 
 function initialize(data) {
   console.log(data);
   startMap(data);
-  initRoutesMenu(data.routes);
 }
 
 function initMap() {
