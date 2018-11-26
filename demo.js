@@ -68,8 +68,28 @@ function initMapWithRoutes(data) {
   showRoutes(data, map)
 }
 
+function initRoutesMenu(data) {
+  let routesMenu = document.getElementById("routes-menu");
+  let routeTemplate = routesMenu.querySelector(".route-card")
+  routeTemplate = routeTemplate.parentElement.removeChild(routeTemplate);
+  data.routes.forEach(route => {
+    let routeElement = routeTemplate.cloneNode(true);
+    routeElement.style.borderLeftColor = "#" + route.tags.route_color;
+    let routeTitle = routeElement.querySelector(".route-card--title");
+    routeTitle.innerText = `Route ${route.name}`;
+    let routeSubTitle = routeElement.querySelector(".route-card--subtitle");
+    routeSubTitle.innerText = route.tags.route_long_name;
+    routesMenu.appendChild(routeElement);
+  });
+}
+
+function initRoutes(data) {
+  initMapWithRoutes(data);
+  initRoutesMenu(data);
+}
+
 function initMap() {
-  getJson(ROUTES_URL).then(getJSONFromResponse).then(initMapWithRoutes).catch(err => {
+  getJson(ROUTES_URL).then(getJSONFromResponse).then(initRoutes).catch(err => {
     console.error(err);
   })
 }

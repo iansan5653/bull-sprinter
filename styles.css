@@ -17,12 +17,8 @@ body {
 }
 
 .mdc-top-app-bar.top-app-bar--transparent {
-  background-color: rgba(0,103,71,0.5);
+  background-color: rgba(0,103,71,0.8);
   transition: 0.25s background ease;
-}
-
-.mdc-top-app-bar.top-app-bar--transparent:hover {
-  background-color: rgba(0,103,71,0.7);
 }
 
 #map-container {
@@ -47,4 +43,11 @@ body {
 
 .drawer-frame-root {
   display: flex;
+}
+
+.route-card {
+  border-radius: 4px;
+  padding: .5em;
+  margin: 1em;
+  border-left: 4px solid gray;
 }
