@@ -1,6 +1,7 @@
 const ROUTES_URL = "https://transit.land/api/v1/routes?operated_by=o-dhvrs-usfbullrunner";
+const STOPS_BASE_URL = "https://transit.land/api/v1/stops?served_by=";
 
-function getJson(url) {
+function fetchResource(url) {
   return new Promise((res, rej) => {
     let xhr = new XMLHttpRequest();
     xhr.addEventListener("load", () => {
@@ -37,8 +38,8 @@ function showRoutesList(data) {
   });
 }
 
-function showRoutes(data, map) {
-  data.routes.forEach(route => {
+function showRoutes(routes, map) {
+  routes.forEach(route => {
     coordinates = route.geometry.coordinates[0].map(point => {
       let pointAsLatLng = {lng: +point[0], lat: +point[1]};
       return pointAsLatLng;
@@ -54,7 +55,29 @@ function showRoutes(data, map) {
   })
 }
 
-function initMapWithRoutes(data) {
+function showStops(stops, map) {
+  let routes = {}
+  stops.forEach(stop => {
+    coordinates = {lng: +stop.geometry.coordinates[0], lat: +stop.geometry.coordinates[1]};
+    let stopMarker = new google.maps.Marker({
+      animation: google.maps.Animation.DROP,
+      title: stop.name,
+      map: map,
+      opacity: 0.5,
+      position: coordinates
+    })
+    for(let route of stop.routes_serving_stop) {
+      if(!routes[route.route_onestop_id]) {
+        routes[route.route_onestop_id] = []
+      }
+      routes[route.route_onestop_id].push(stopMarker)
+    }
+  });
+
+  addRouteListeners(routes)
+}
+
+function startMap(data) {
   const USF = {lat: 28.0610596, lng: -82.4155004};
   let map = new google.maps.Map(
       document.getElementById('map-container'), {
@@ -65,31 +88,55 @@ function initMapWithRoutes(data) {
         minZoom: 13
       });
 
-  showRoutes(data, map)
+  showRoutes(data.routes, map)
+  showStops(data.stops, map)
 }
 
-function initRoutesMenu(data) {
+function initRoutesMenu(routes) {
   let routesMenu = document.getElementById("routes-menu");
   let routeTemplate = routesMenu.querySelector(".route-card")
   routeTemplate = routeTemplate.parentElement.removeChild(routeTemplate);
-  data.routes.forEach(route => {
+  routes.forEach(route => {
     let routeElement = routeTemplate.cloneNode(true);
     routeElement.style.borderLeftColor = "#" + route.tags.route_color;
     let routeTitle = routeElement.querySelector(".route-card--title");
     routeTitle.innerText = `Route ${route.name}`;
     let routeSubTitle = routeElement.querySelector(".route-card--subtitle");
     routeSubTitle.innerText = route.tags.route_long_name;
+    routeElement.dataset.onestop_id = route.onestop_id;
     routesMenu.appendChild(routeElement);
   });
 }
 
-function initRoutes(data) {
-  initMapWithRoutes(data);
-  initRoutesMenu(data);
+function initialize(data) {
+  console.log(data);
+  startMap(data);
+  initRoutesMenu(data.routes);
 }
 
 function initMap() {
-  getJson(ROUTES_URL).then(getJSONFromResponse).then(initRoutes).catch(err => {
+  fetchResource(ROUTES_URL).then(getJSONFromResponse).then(loadStops).then(initialize).catch(err => {
     console.error(err);
   })
+}
+
+async function loadStops(routesData) {
+  allStops = [];
+  for(let route of routesData.routes) {
+    let stopsUrl = STOPS_BASE_URL + route.onestop_id;
+    await fetchResource(stopsUrl).then(getJSONFromResponse).then(stopsData => {
+      for(let stop of stopsData.stops) {
+        if(!allStops.some(item => item.onestop_id === stop.onestop_id)) {
+          allStops.push(stop)
+        } else {
+          stopIndex = allStops.findIndex(item => item.onestop_id === stop.onestop_id)
+          allStops[stopIndex].routes_serving_stop.push(stop.routes_serving_stop[0])
+        }
+      }
+    }).catch(err => console.error(err));
+  }
+  return {
+    routes: routesData.routes,
+    stops: allStops
+  };
 }
