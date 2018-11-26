@@ -38,8 +38,9 @@ function showRoutesList(data) {
   });
 }
 
-function showRoutes(routes, map) {
-  routes.forEach(route => {
+function showRoutes(data, map) {
+  routePaths = {all: []};
+  data.routes.forEach(route => {
     coordinates = route.geometry.coordinates[0].map(point => {
       let pointAsLatLng = {lng: +point[0], lat: +point[1]};
       return pointAsLatLng;
@@ -52,12 +53,16 @@ function showRoutes(routes, map) {
       strokeWeight: 2,
       visible: true
     });
-  })
+    routePaths[route.onestop_id] = routePath;
+    routePaths.all.push(routePath);
+  });
+
+  showStops(data, map, routePaths);
 }
 
-function showStops(stops, map) {
+function showStops(data, map, routePaths) {
   let routes = {all: []}
-  stops.forEach(stop => {
+  data.stops.forEach(stop => {
     coordinates = {lng: +stop.geometry.coordinates[0], lat: +stop.geometry.coordinates[1]};
     let stopMarker = new google.maps.Marker({
       animation: google.maps.Animation.DROP,
@@ -75,23 +80,33 @@ function showStops(stops, map) {
     }
   });
 
-  addRouteListeners(routes)
+  addRouteListeners(routes, routePaths)
 }
 
-function addRouteListeners(routes) {
+function addRouteListeners(routes, routePaths) {
   document.querySelectorAll(".route-selector").forEach(routeSelector => {
     routeSelector.addEventListener("mouseover", event => {
+      routePaths.all.forEach(routePath => {
+        routePath.setVisible(false);
+      });
       routes.all.forEach(stopMarker => {
         stopMarker.setVisible(false);
       });
+      routePaths[routeSelector.dataset.onestop_id].setVisible(true);
       routes[routeSelector.dataset.onestop_id].forEach(stopMarker => {
         stopMarker.setVisible(true);
       });
     });
     routeSelector.addEventListener("mouseout", event => {
+      routePaths.all.forEach(routePath => {
+        routePath.setVisible(true);
+      });
       routes.all.forEach(stopMarker => {
         stopMarker.setVisible(true);
       });
+    });
+    routeSelector.addEventListener("click", event => {
+      routePaths[routeSelector.dataset.onestop_id]
     });
   })
 }
@@ -125,8 +140,7 @@ function initRoutesMenu(data, map) {
     routesMenu.appendChild(routeElement);
   });
 
-  showRoutes(data.routes, map)
-  showStops(data.stops, map)
+  showRoutes(data, map)
 }
 
 function initialize(data) {
