@@ -12,17 +12,37 @@
   <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
   <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
 </head>
-<body class="mdc-typography">
-  <header class="mdc-top-app-bar">
-    <div class="mdc-top-app-bar__row">
-      <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-        <a href="#" class="material-icons mdc-top-app-bar__navigation-icon">menu</a>
-        <span class="mdc-top-app-bar__title">Bull Sprinter Demo</span>
-      </section>
+<body class="mdc-typography drawer-frame-root">
+  <aside class="mdc-drawer">
+    <div class="mdc-drawer__content">
+      <nav class="mdc-list">
+        <a class="mdc-list-item mdc-list-item--activated" href="#" aria-selected="true">
+          <i class="material-icons mdc-list-item__graphic" aria-hidden="true">inbox</i>
+          <span class="mdc-list-item__text">Inbox</span>
+        </a>
+        <a class="mdc-list-item" href="#">
+          <i class="material-icons mdc-list-item__graphic" aria-hidden="true">send</i>
+          <span class="mdc-list-item__text">Outgoing</span>
+        </a>
+        <a class="mdc-list-item" href="#">
+          <i class="material-icons mdc-list-item__graphic" aria-hidden="true">drafts</i>
+          <span class="mdc-list-item__text">Drafts</span>
+        </a>
+      </nav>
     </div>
-  </header>
-  <div id="map-container">Loading...
-  </div>
+  </aside>
+  <main class="mdc-drawer-app-content">
+    <header class="mdc-top-app-bar drawer-top-app-bar top-app-bar--transparent">
+      <div class="mdc-top-app-bar__row">
+        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+          <a href="#" class="material-icons mdc-top-app-bar__navigation-icon">menu</a>
+          <h1 class="mdc-top-app-bar__title">Bull Sprinter Demo</h1>
+        </section>
+      </div>
+    </header>
+    <div id="map-container" class="drawer-main-content">Loading Map...
+    </div>
+  </main>
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXB57U462X9Eci55yF6G_sBfQdQ4j6Ipg &callback=initMap">
   </script>

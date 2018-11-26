@@ -51,14 +51,19 @@ function showRoutes(data, map) {
       strokeWeight: 2,
       visible: true
     });
-    console.log(routePath)
   })
 }
 
 function initMapWithRoutes(data) {
   const USF = {lat: 28.0610596, lng: -82.4155004};
   let map = new google.maps.Map(
-      document.getElementById('map-container'), {zoom: 15, center: USF});
+      document.getElementById('map-container'), {
+        zoom: 15, 
+        center: USF,
+        disableDefaultUI: true,
+        gestureHandling: "greedy",
+        minZoom: 13
+      });
 
   showRoutes(data, map)
 }

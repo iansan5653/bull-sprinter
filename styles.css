@@ -7,7 +7,8 @@ body {
   position: fixed;
   height: 100vh;
   width: 100vw;
-  --mdc-theme-primary: #00553e;
+  --mdc-theme-primary: #006747;
+  --mdc-theme-on-primary: #fff;
   --mdc-theme-seconday: #d9f11c;
 }
 
@@ -15,12 +16,35 @@ body {
   list-style-type: none;
 }
 
-.mdc-top-app-bar {
-  position: static !important;
+.mdc-top-app-bar.top-app-bar--transparent {
+  background-color: rgba(0,103,71,0.5);
+  transition: 0.25s background ease;
+}
+
+.mdc-top-app-bar.top-app-bar--transparent:hover {
+  background-color: rgba(0,103,71,0.7);
 }
 
 #map-container {
   width: 100%;
   height: 100%;
   margin: 0;
+}
+
+.mdc-drawer-app-content {
+  flex: auto;
+  overflow: auto;
+}
+
+.drawer-main-content {
+  overflow: auto;
+  height: 100%;
+}
+
+.drawer-app-bar {
+  position: absolute;
+}
+
+.drawer-frame-root {
+  display: flex;
 }
